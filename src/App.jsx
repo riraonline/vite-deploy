@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+// components
+import Sidebar from './components/Sidebar';
+import Navbar from './routes/Navbar';
+import Home from './routes/Home';
+
+// routes
+import User from './routes/User';
+import Order from './routes/Order';
+
+const App = () => {
+  const [toggle, setToggle] = useState(false);
+  function Toggle() {
+    setToggle(!toggle);
+  }
+
+  useEffect(() => {
+    const handleSize = () => {
+      if (window.innerWidth > 768) {
+        setToggle(false);
+      }
+    };
+    window.addEventListener('resize', handleSize);
+
+    return () => {
+      window.removeEventListener('resize', handleSize);
+    };
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <BrowserRouter>
+      <div className="d-flex">
+        <div className={toggle ? 'd-none' : 'w-auto position-fixed'}>
+          <Sidebar />
+        </div>
+        <div className={toggle ? 'd-none' : 'invisible'}>
+          <Sidebar />
+        </div>
+        <div className="col overflow-auto">
+          <Navbar Toggle={Toggle} />
+          <Routes>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/users" element={<User />}></Route>
+            <Route path="/orders" element={<Order />}></Route>
+          </Routes>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </BrowserRouter>
+  );
+};
 
-export default App
+export default App;
